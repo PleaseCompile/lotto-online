@@ -60,6 +60,9 @@ export const useAuth = () => {
         return null
       }
 
+      // Fetch user profile after successful sign in
+      await fetchProfile()
+
       return data
     } catch (e) {
       error.value = 'เกิดข้อผิดพลาด กรุณาลองใหม่'
@@ -73,15 +76,11 @@ export const useAuth = () => {
     if (!user.value) return null
 
     try {
-      const { data } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.value.id)
-        .single()
-
-      profile.value = data as User | null
+      const data = await $fetch<User>('/api/me')
+      profile.value = data
       return profile.value
     } catch {
+      profile.value = null
       return null
     }
   }
