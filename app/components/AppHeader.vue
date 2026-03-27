@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const user = useSupabaseUser()
+const userId = useUserId()
 const supabase = useSupabaseClient()
 const colorMode = useColorMode()
 const mobileMenuOpen = ref(false)
@@ -27,7 +28,7 @@ const fetchCartCount = async () => {
   const { count } = await supabase
     .from('cart_items')
     .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.value.id)
+    .eq('user_id', userId.value)
     .eq('status', 'active')
   cartCount.value = count || 0
 }

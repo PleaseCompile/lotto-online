@@ -7,13 +7,14 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const userId = useUserId()
 
 const { data: orders, pending } = await useAsyncData('my-orders', async () => {
   if (!user.value) return []
   const { data } = await supabase
     .from('orders')
     .select('*')
-    .eq('user_id', user.value.id)
+    .eq('user_id', userId.value)
     .order('created_at', { ascending: false })
   return (data || []) as Order[]
 })

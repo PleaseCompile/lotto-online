@@ -7,6 +7,7 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const userId = useUserId()
 
 const { data: safeTickets, pending, refresh } = await useAsyncData('safe', async () => {
   if (!user.value) return []
@@ -19,7 +20,7 @@ const { data: safeTickets, pending, refresh } = await useAsyncData('safe', async
       ),
       orders!inner(user_id, status)
     `)
-    .eq('orders.user_id', user.value.id)
+    .eq('orders.user_id', userId.value)
     .eq('orders.status', 'paid')
     .order('created_at', { ascending: false })
   return data || []
@@ -31,7 +32,7 @@ const { data: prizeClaims } = await useAsyncData('prize-claims', async () => {
   const { data } = await supabase
     .from('prize_claims')
     .select('*')
-    .eq('user_id', user.value.id)
+    .eq('user_id', userId.value)
   return data || []
 })
 

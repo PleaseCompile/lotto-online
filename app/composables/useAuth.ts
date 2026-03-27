@@ -72,15 +72,17 @@ export const useAuth = () => {
     }
   }
 
+  const userId = computed(() => (user.value as any)?.sub ?? (user.value as any)?.id ?? null)
+
   const fetchProfile = async () => {
-    if (!user.value) return null
+    if (!user.value || !userId.value) return null
 
     try {
       // Primary: Direct Supabase query (works with RLS: auth.uid() = id)
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('id', user.value.id)
+        .eq('id', userId.value)
         .single()
 
       if (!error && data) {

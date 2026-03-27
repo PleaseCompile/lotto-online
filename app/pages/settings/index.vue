@@ -3,6 +3,7 @@ definePageMeta({ middleware: ['auth'] })
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const userId = useUserId()
 
 const profile = ref<any>(null)
 const loading = ref(true)
@@ -19,7 +20,7 @@ async function fetchProfile() {
     const { data } = await supabase
       .from('users')
       .select('*')
-      .eq('id', user.value.id)
+      .eq('id', userId.value)
       .single()
     profile.value = data
     if (data) {
@@ -37,7 +38,7 @@ async function saveProfile() {
     await supabase
       .from('users')
       .update({ full_name: form.full_name.trim() })
-      .eq('id', user.value.id)
+      .eq('id', userId.value)
     await fetchProfile()
   } catch {
     alert('บันทึกไม่สำเร็จ')

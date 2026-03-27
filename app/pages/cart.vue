@@ -7,13 +7,14 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const userId = useUserId()
 
 const { data: cartItems, pending, refresh } = await useAsyncData('cart', async () => {
   if (!user.value) return []
   const { data } = await supabase
     .from('cart_items')
     .select('*, tickets(*)')
-    .eq('user_id', user.value.id)
+    .eq('user_id', userId.value)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
   return (data || []) as (CartItem & { tickets: Ticket })[]

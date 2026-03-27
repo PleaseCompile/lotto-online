@@ -7,13 +7,14 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const userId = useUserId()
 
 const { data: wallet, pending: walletPending } = await useAsyncData('wallet', async () => {
   if (!user.value) return null
   const { data } = await supabase
     .from('wallets')
     .select('*')
-    .eq('user_id', user.value.id)
+    .eq('user_id', userId.value)
     .single()
   return data as Wallet | null
 })

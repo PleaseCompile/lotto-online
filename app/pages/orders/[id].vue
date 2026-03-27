@@ -8,6 +8,7 @@ definePageMeta({
 const route = useRoute()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const userId = useUserId()
 const orderId = route.params.id as string
 
 const { data: order, pending } = await useAsyncData(`order-${orderId}`, async () => {
@@ -19,7 +20,7 @@ const { data: order, pending } = await useAsyncData(`order-${orderId}`, async ()
       order_items(*, tickets(ticket_number, set_number))
     `)
     .eq('id', orderId)
-    .eq('user_id', user.value.id)
+    .eq('user_id', userId.value)
     .single()
   return data as (Order & { order_items: (OrderItem & { tickets: Pick<Ticket, 'ticket_number' | 'set_number'> })[] }) | null
 })
