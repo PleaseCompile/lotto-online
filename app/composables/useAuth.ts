@@ -76,7 +76,9 @@ export const useAuth = () => {
     if (!user.value) return null
 
     try {
-      const data = await $fetch<User>('/api/me')
+      // Use useRequestFetch during SSR to forward cookies to the API
+      const fetcher = import.meta.server ? useRequestFetch() : $fetch
+      const data = await fetcher<User>('/api/me')
       profile.value = data
       return profile.value
     } catch {
