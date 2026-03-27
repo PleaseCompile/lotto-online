@@ -1,9 +1,38 @@
 <script setup lang="ts">
 const mobileMenuOpen = ref(false)
+const { isAdmin, fetchProfile, profile } = useAuth()
+const user = useSupabaseUser()
+
+// Auth gate — block rendering until admin check resolves
+const authChecked = ref(false)
+const authorized = ref(false)
+
+onMounted(async () => {
+  if (!user.value) {
+    navigateTo('/login')
+    return
+  }
+  if (!profile.value) {
+    await fetchProfile()
+  }
+  authorized.value = isAdmin.value
+  authChecked.value = true
+  if (!authorized.value) {
+    navigateTo('/')
+  }
+})
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-surface-alt dark:bg-surface-dark">
+  <!-- Loading gate — never show admin content until verified -->
+  <div v-if="!authChecked" class="min-h-screen flex items-center justify-center bg-surface-alt dark:bg-surface-dark">
+    <div class="text-center space-y-3">
+      <Icon name="ph:spinner" class="text-4xl text-primary animate-spin" />
+      <p class="text-sm text-[var(--color-text-muted)]">กำลังตรวจสอบสิทธิ์...</p>
+    </div>
+  </div>
+
+  <div v-else-if="authorized" class="min-h-screen flex bg-surface-alt dark:bg-surface-dark">
     <!-- Sidebar -->
     <aside class="hidden lg:flex lg:flex-col w-64 border-r border-border dark:border-border-dark bg-surface dark:bg-surface-dark-alt">
       <div class="p-4 border-b border-border dark:border-border-dark">

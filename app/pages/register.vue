@@ -19,10 +19,15 @@ const passwordMismatch = computed(() => {
   return form.confirmPassword.length > 0 && form.password !== form.confirmPassword
 })
 
+const passwordStrong = computed(() => {
+  const p = form.password
+  return p.length >= 8 && /[A-Za-z]/.test(p) && /[0-9]/.test(p)
+})
+
 const canSubmit = computed(() => {
   return form.full_name.trim().length > 0
     && form.email.trim().length > 0
-    && form.password.length >= 6
+    && passwordStrong.value
     && form.password === form.confirmPassword
 })
 
@@ -118,7 +123,7 @@ const handleRegister = async () => {
                 v-model="form.password"
                 :type="showPassword ? 'text' : 'password'"
                 class="input !pl-10 !pr-10"
-                placeholder="อย่างน้อย 6 ตัวอักษร"
+                placeholder="อย่างน้อย 8 ตัวอักษร (ตัวอักษร+ตัวเลข)"
                 autocomplete="new-password"
               />
               <button
@@ -129,8 +134,8 @@ const handleRegister = async () => {
                 <Icon :name="showPassword ? 'ph:eye-slash' : 'ph:eye'" />
               </button>
             </div>
-            <p v-if="form.password.length > 0 && form.password.length < 6" class="text-xs text-warning mt-1">
-              รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร
+            <p v-if="form.password.length > 0 && !passwordStrong" class="text-xs text-warning mt-1">
+              รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร ประกอบด้วยตัวอักษรและตัวเลข
             </p>
           </div>
 

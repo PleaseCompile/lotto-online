@@ -52,7 +52,8 @@ export default defineEventHandler(async (event) => {
     .insert(drawResults)
 
   if (insertError) {
-    throw createError({ statusCode: 500, message: `บันทึกผลรางวัลล้มเหลว: ${insertError.message}` })
+    console.error('[fetch-results] DB insert error:', insertError.message)
+    throw createError({ statusCode: 500, message: 'บันทึกผลรางวัลล้มเหลว กรุณาลองใหม่' })
   }
 
   // Update draw status to resulted

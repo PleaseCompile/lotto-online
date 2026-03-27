@@ -23,3 +23,7 @@ logs
 .env.*
 !.env.example
 .vercel
+
+# Test/debug files with credentials
+test-*.cjs
+test-*.js

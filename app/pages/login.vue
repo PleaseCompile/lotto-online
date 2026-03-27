@@ -11,7 +11,7 @@ const password = ref('')
 const showPassword = ref(false)
 
 const canSubmit = computed(() => {
-  return email.value.trim().length > 0 && password.value.length >= 6
+  return email.value.trim().length > 0 && password.value.length >= 8
 })
 
 const handleLogin = async () => {
