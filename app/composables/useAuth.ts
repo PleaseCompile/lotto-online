@@ -1,4 +1,5 @@
 import type { User } from '~/types/database'
+import { hashPassword } from '~/utils/crypto'
 
 export const useAuth = () => {
   const supabase = useSupabaseClient()
@@ -13,9 +14,12 @@ export const useAuth = () => {
     error.value = null
 
     try {
+      // Pre-hash password so plaintext never leaves the browser
+      const hashedPassword = await hashPassword(password)
+
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
-        password,
+        password: hashedPassword,
         options: {
           data: { full_name: fullName },
           emailRedirectTo: `${window.location.origin}/confirm`,
@@ -50,9 +54,12 @@ export const useAuth = () => {
     error.value = null
 
     try {
+      // Pre-hash password so plaintext never leaves the browser
+      const hashedPassword = await hashPassword(password)
+
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
-        password,
+        password: hashedPassword,
       })
 
       if (signInError) {
