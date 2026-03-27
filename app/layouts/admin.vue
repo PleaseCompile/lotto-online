@@ -1,8 +1,4 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: ['auth', 'admin'],
-})
-
 const mobileMenuOpen = ref(false)
 </script>
 
