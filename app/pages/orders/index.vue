@@ -69,7 +69,7 @@ useSeoMeta({ title: 'คำสั่งซื้อของฉัน' })
           <p class="font-mono font-medium">{{ order.order_number }}</p>
           <p class="text-xs text-[var(--color-text-muted)] mt-0.5">
             {{ new Date(order.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) }}
-            · {{ order.item_count }} ใบ
+            · {{ order.total_items }} ใบ
           </p>
         </div>
         <div class="text-right">

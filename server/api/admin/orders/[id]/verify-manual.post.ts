@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
     type: 'payment_verified',
     title: 'การชำระเงินสำเร็จ',
     message: `ออเดอร์ ${order.order_number} ได้รับการยืนยันการชำระเงินแล้ว`,
-    data: { order_id: id },
+    metadata: { order_id: id },
   })
 
   return { status: 'success' }

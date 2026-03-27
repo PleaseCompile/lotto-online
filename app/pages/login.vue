@@ -3,48 +3,25 @@ definePageMeta({
   layout: false,
 })
 
-const { requestOtp, verifyOtp, loading, error } = useAuth()
-
-const step = ref<'phone' | 'otp'>('phone')
-const phone = ref('')
-const otp = ref('')
+const { signIn, loading, error } = useAuth()
 const route = useRoute()
 
-const formattedPhone = computed(() => {
-  // Ensure +66 format
-  const cleaned = phone.value.replace(/\D/g, '')
-  if (cleaned.startsWith('0')) {
-    return '+66' + cleaned.slice(1)
-  }
-  if (cleaned.startsWith('66')) {
-    return '+' + cleaned
-  }
-  return '+66' + cleaned
+const email = ref('')
+const password = ref('')
+const showPassword = ref(false)
+
+const canSubmit = computed(() => {
+  return email.value.trim().length > 0 && password.value.length >= 6
 })
 
-const handleRequestOtp = async () => {
-  if (!phone.value || phone.value.length < 9) return
+const handleLogin = async () => {
+  if (!canSubmit.value) return
 
-  const success = await requestOtp(formattedPhone.value)
-  if (success) {
-    step.value = 'otp'
-  }
-}
-
-const handleVerifyOtp = async () => {
-  if (!otp.value || otp.value.length !== 6) return
-
-  const success = await verifyOtp(formattedPhone.value, otp.value)
-  if (success) {
+  const data = await signIn(email.value.trim(), password.value)
+  if (data) {
     const redirect = (route.query.redirect as string) || '/'
     navigateTo(redirect)
   }
-}
-
-const handleOtpInput = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  target.value = target.value.replace(/\D/g, '').slice(0, 6)
-  otp.value = target.value
 }
 </script>
 
@@ -58,80 +35,66 @@ const handleOtpInput = (e: Event) => {
         </NuxtLink>
         <h1 class="text-2xl font-bold mt-4">เข้าสู่ระบบ</h1>
         <p class="text-sm text-[var(--color-text-muted)] mt-1">
-          กรอกเบอร์โทรศัพท์เพื่อรับรหัส OTP
+          กรอกอีเมลและรหัสผ่านเพื่อเข้าสู่ระบบ
         </p>
       </div>
 
       <!-- Error -->
-      <div v-if="error" class="mb-4 p-3 rounded-md bg-danger/10 border border-danger/20 text-danger text-sm">
+      <div v-if="error" class="mb-4 p-3 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm">
         <div class="flex items-center gap-2">
-          <Icon name="ph:warning-circle" />
-          {{ error }}
+          <Icon name="ph:warning-circle" class="shrink-0" />
+          <span>{{ error }}</span>
         </div>
       </div>
 
-      <!-- Step 1: Phone -->
-      <form v-if="step === 'phone'" @submit.prevent="handleRequestOtp" class="space-y-4">
+      <!-- Login Form -->
+      <form @submit.prevent="handleLogin" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium mb-1.5">เบอร์โทรศัพท์</label>
+          <label class="block text-sm font-medium mb-1.5">อีเมล</label>
           <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] text-sm">+66</span>
+            <Icon name="ph:envelope-simple" class="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
             <input
-              v-model="phone"
-              type="tel"
-              class="input !pl-12"
-              placeholder="812345678"
-              maxlength="10"
-              inputmode="numeric"
+              v-model="email"
+              type="email"
+              class="input !pl-10"
+              placeholder="example@email.com"
+              autocomplete="email"
               autofocus
             />
           </div>
         </div>
-        <UiButton
-          variant="primary"
-          size="lg"
-          :loading="loading"
-          class="w-full"
-          :disabled="!phone || phone.length < 9"
-        >
-          ขอรหัส OTP
-        </UiButton>
-      </form>
 
-      <!-- Step 2: OTP -->
-      <form v-else @submit.prevent="handleVerifyOtp" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium mb-1.5">รหัส OTP (6 หลัก)</label>
-          <input
-            :value="otp"
-            type="text"
-            class="input text-center text-2xl font-mono tracking-[0.5em]"
-            placeholder="000000"
-            maxlength="6"
-            inputmode="numeric"
-            autofocus
-            @input="handleOtpInput"
-          />
-          <p class="text-xs text-[var(--color-text-muted)] mt-1.5">
-            ส่งรหัสไปที่ {{ formattedPhone }}
-          </p>
+          <label class="block text-sm font-medium mb-1.5">รหัสผ่าน</label>
+          <div class="relative">
+            <Icon name="ph:lock-simple" class="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="input !pl-10 !pr-10"
+              placeholder="รหัสผ่าน"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+              @click="showPassword = !showPassword"
+            >
+              <Icon :name="showPassword ? 'ph:eye-slash' : 'ph:eye'" />
+            </button>
+          </div>
         </div>
+
         <UiButton
           variant="primary"
           size="lg"
           :loading="loading"
           class="w-full"
-          :disabled="otp.length !== 6"
+          :disabled="!canSubmit"
         >
-          ยืนยัน OTP
+          <Icon name="ph:sign-in" />
+          เข้าสู่ระบบ
         </UiButton>
-        <button
-          type="button"
-          class="w-full text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors"
-          @click="step = 'phone'; otp = ''; error = null"
-        >
-          เปลี่ยนเบอร์โทรศัพท์
-        </button>
       </form>
 
       <!-- Register Link -->

@@ -18,7 +18,7 @@ export async function batchCheckPrizesForDraw(drawId: string) {
         draw_id: drawId,
         prize_type: prize.id,
         prize_name: prize.name,
-        reward_amount: parseInt(prize.reward) * 100,
+        prize_amount: parseInt(prize.reward) * 100,
         winning_number: number,
       })
     }
@@ -29,7 +29,7 @@ export async function batchCheckPrizesForDraw(drawId: string) {
         draw_id: drawId,
         prize_type: rn.id,
         prize_name: rn.name,
-        reward_amount: parseInt(rn.reward) * 100,
+        prize_amount: parseInt(rn.reward) * 100,
         winning_number: number,
       })
     }
@@ -45,7 +45,7 @@ export async function batchCheckPrizesForDraw(drawId: string) {
   // 3. Get all sold tickets for this draw
   const { data: soldTickets } = await supabase
     .from('tickets')
-    .select('id, number')
+    .select('id, ticket_number')
     .eq('draw_id', drawId)
     .eq('status', 'sold')
 
@@ -58,7 +58,7 @@ export async function batchCheckPrizesForDraw(drawId: string) {
 
   // 4. Check each ticket
   for (const ticket of soldTickets) {
-    const matches = checkTicketAgainstResults(ticket.number, apiData.response)
+    const matches = checkTicketAgainstResults(ticket.ticket_number, apiData.response)
 
     if (matches.length > 0) {
       winnersCount++
@@ -111,9 +111,9 @@ export async function batchCheckPrizesForDraw(drawId: string) {
         user_id: order.user_id,
         type: 'prize_won',
         title: 'ยินดีด้วย! คุณถูกรางวัล!',
-        message: `ลอตเตอรี่เลข ${ticket.number} ถูก ${prizeNames} รวม ${(totalPrize / 100).toLocaleString()} บาท`,
-        data: {
-          ticket_number: ticket.number,
+        message: `ลอตเตอรี่เลข ${ticket.ticket_number} ถูก ${prizeNames} รวม ${(totalPrize / 100).toLocaleString()} บาท`,
+        metadata: {
+          ticket_number: ticket.ticket_number,
           prize_matches: matches,
           total_amount: totalPrize,
         },

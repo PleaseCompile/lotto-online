@@ -72,8 +72,8 @@ useSeoMeta({ title: 'ตั้งค่าบัญชี' })
           <input v-model="form.full_name" type="text" class="input w-full" />
         </div>
         <div>
-          <label class="block text-sm font-medium mb-1">เบอร์โทรศัพท์</label>
-          <input :value="profile?.phone || user?.phone || '-'" type="text" class="input w-full" disabled />
+          <label class="block text-sm font-medium mb-1">อีเมล</label>
+          <input :value="user?.email || '-'" type="text" class="input w-full" disabled />
         </div>
         <UiButton variant="primary" :loading="saving" @click="saveProfile">
           บันทึก

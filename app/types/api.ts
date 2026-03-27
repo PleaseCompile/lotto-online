@@ -60,7 +60,7 @@ export interface CheckoutResponse {
   order_id: string
   order_number: string
   total_amount: number
-  item_count: number
+  total_items: number
   payment_deadline: string
   bank_account: {
     bank: string

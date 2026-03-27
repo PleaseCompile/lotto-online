@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       id,
       ticket_id,
       prize_status,
-      tickets!inner(id, number, set_number, draw_id),
+      tickets!inner(id, ticket_number, set_number, draw_id),
       orders!inner(user_id, status)
     `)
     .eq('orders.user_id', user.id)
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     } catch {
       return {
         data: orderItems.map((item: any) => ({
-          ticket_number: item.tickets.number,
+          ticket_number: item.tickets.ticket_number,
           prize_status: item.prize_status || 'unchecked',
           prizes: [],
         })),
@@ -62,9 +62,9 @@ export default defineEventHandler(async (event) => {
     const ticket = item.tickets
 
     if (apiResults) {
-      const matches = checkTicketAgainstResults(ticket.number, apiResults)
+      const matches = checkTicketAgainstResults(ticket.ticket_number, apiResults)
       return {
-        ticket_number: ticket.number,
+        ticket_number: ticket.ticket_number,
         set_number: ticket.set_number,
         prize_status: matches.length > 0 ? 'won' : 'no_prize',
         prizes: matches,
@@ -76,45 +76,45 @@ export default defineEventHandler(async (event) => {
     if (drawResults) {
       for (const result of drawResults) {
         // Check full number
-        if (result.winning_number === ticket.number) {
+        if (result.winning_number === ticket.ticket_number) {
           ticketPrizes.push({
             prizeType: result.prize_type,
             prizeName: result.prize_name,
-            rewardAmount: result.reward_amount,
+            rewardAmount: result.prize_amount,
           })
         }
         // Check front 3
         if (result.prize_type === 'runningNumberFrontThree' &&
-            result.winning_number === ticket.number.substring(0, 3)) {
+            result.winning_number === ticket.ticket_number.substring(0, 3)) {
           ticketPrizes.push({
             prizeType: result.prize_type,
             prizeName: result.prize_name,
-            rewardAmount: result.reward_amount,
+            rewardAmount: result.prize_amount,
           })
         }
         // Check back 3
         if (result.prize_type === 'runningNumberBackThree' &&
-            result.winning_number === ticket.number.substring(3, 6)) {
+            result.winning_number === ticket.ticket_number.substring(3, 6)) {
           ticketPrizes.push({
             prizeType: result.prize_type,
             prizeName: result.prize_name,
-            rewardAmount: result.reward_amount,
+            rewardAmount: result.prize_amount,
           })
         }
         // Check back 2
         if (result.prize_type === 'runningNumberBackTwo' &&
-            result.winning_number === ticket.number.substring(4, 6)) {
+            result.winning_number === ticket.ticket_number.substring(4, 6)) {
           ticketPrizes.push({
             prizeType: result.prize_type,
             prizeName: result.prize_name,
-            rewardAmount: result.reward_amount,
+            rewardAmount: result.prize_amount,
           })
         }
       }
     }
 
     return {
-      ticket_number: ticket.number,
+      ticket_number: ticket.ticket_number,
       set_number: ticket.set_number,
       prize_status: ticketPrizes.length > 0 ? 'won' : (item.prize_status || 'no_prize'),
       prizes: ticketPrizes,

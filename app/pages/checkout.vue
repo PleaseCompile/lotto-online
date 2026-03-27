@@ -114,7 +114,7 @@ onMounted(() => {
         </div>
         <div class="text-sm space-y-1 text-[var(--color-text-muted)]">
           <p>เลขออเดอร์: <span class="font-mono text-[var(--color-text)]">{{ orderData.order_number }}</span></p>
-          <p>จำนวน: {{ orderData.item_count }} ใบ</p>
+          <p>จำนวน: {{ orderData.total_items }} ใบ</p>
         </div>
         <div class="flex items-center justify-between pt-3 border-t border-[var(--color-border)]">
           <span class="font-medium">ยอดชำระทั้งสิ้น</span>

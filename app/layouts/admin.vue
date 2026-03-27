@@ -21,10 +21,7 @@ const mobileMenuOpen = ref(false)
         <AdminNavItem to="/admin/tickets" icon="ph:ticket-fill" label="จัดการลอตเตอรี่" />
         <AdminNavItem to="/admin/orders" icon="ph:shopping-bag-fill" label="ออเดอร์" />
         <AdminNavItem to="/admin/draws" icon="ph:calendar-fill" label="งวดลอตเตอรี่" />
-        <AdminNavItem to="/admin/payments" icon="ph:credit-card-fill" label="การชำระเงิน" />
-        <AdminNavItem to="/admin/prizes" icon="ph:trophy-fill" label="รางวัล & ขึ้นเงิน" />
-        <AdminNavItem to="/admin/users" icon="ph:users-fill" label="ผู้ใช้งาน" />
-        <AdminNavItem to="/admin/settings" icon="ph:gear-fill" label="ตั้งค่า" />
+        <AdminNavItem to="/admin/prize-claims" icon="ph:trophy-fill" label="รางวัล & ขึ้นเงิน" />
       </nav>
       <div class="p-4 border-t border-border dark:border-border-dark">
         <NuxtLink to="/" class="flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)]">
@@ -63,10 +60,7 @@ const mobileMenuOpen = ref(false)
               <AdminNavItem to="/admin/tickets" icon="ph:ticket-fill" label="จัดการลอตเตอรี่" @click="mobileMenuOpen = false" />
               <AdminNavItem to="/admin/orders" icon="ph:shopping-bag-fill" label="ออเดอร์" @click="mobileMenuOpen = false" />
               <AdminNavItem to="/admin/draws" icon="ph:calendar-fill" label="งวดลอตเตอรี่" @click="mobileMenuOpen = false" />
-              <AdminNavItem to="/admin/payments" icon="ph:credit-card-fill" label="การชำระเงิน" @click="mobileMenuOpen = false" />
-              <AdminNavItem to="/admin/prizes" icon="ph:trophy-fill" label="รางวัล & ขึ้นเงิน" @click="mobileMenuOpen = false" />
-              <AdminNavItem to="/admin/users" icon="ph:users-fill" label="ผู้ใช้งาน" @click="mobileMenuOpen = false" />
-              <AdminNavItem to="/admin/settings" icon="ph:gear-fill" label="ตั้งค่า" @click="mobileMenuOpen = false" />
+              <AdminNavItem to="/admin/prize-claims" icon="ph:trophy-fill" label="รางวัล & ขึ้นเงิน" @click="mobileMenuOpen = false" />
             </nav>
           </div>
         </Transition>

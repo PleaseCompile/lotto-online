@@ -8,49 +8,61 @@ export const useAuth = () => {
 
   const profile = useState<User | null>('user-profile', () => null)
 
-  const requestOtp = async (phone: string) => {
+  const signUp = async (email: string, password: string, fullName: string) => {
     loading.value = true
     error.value = null
 
     try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        phone,
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName },
+        },
       })
 
-      if (otpError) {
-        error.value = otpError.message
-        return false
+      if (signUpError) {
+        error.value = signUpError.message
+        return null
       }
 
-      return true
+      // Create user profile in public.users
+      if (data.user) {
+        await supabase.from('users').upsert({
+          id: data.user.id,
+          email,
+          full_name: fullName,
+        }, { onConflict: 'id' })
+      }
+
+      return data
     } catch (e) {
       error.value = 'เกิดข้อผิดพลาด กรุณาลองใหม่'
-      return false
+      return null
     } finally {
       loading.value = false
     }
   }
 
-  const verifyOtp = async (phone: string, token: string) => {
+  const signIn = async (email: string, password: string) => {
     loading.value = true
     error.value = null
 
     try {
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        phone,
-        token,
-        type: 'sms',
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       })
 
-      if (verifyError) {
-        error.value = verifyError.message
-        return false
+      if (signInError) {
+        error.value = signInError.message
+        return null
       }
 
-      return true
+      return data
     } catch (e) {
-      error.value = 'รหัส OTP ไม่ถูกต้อง กรุณาลองใหม่'
-      return false
+      error.value = 'เกิดข้อผิดพลาด กรุณาลองใหม่'
+      return null
     } finally {
       loading.value = false
     }
@@ -89,8 +101,8 @@ export const useAuth = () => {
     loading,
     error,
     isAdmin,
-    requestOtp,
-    verifyOtp,
+    signUp,
+    signIn,
     fetchProfile,
     signOut,
   }

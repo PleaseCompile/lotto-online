@@ -4,19 +4,19 @@ export type UserRole = 'customer' | 'admin' | 'super_admin'
 export type DrawStatus = 'upcoming' | 'selling' | 'closed' | 'resulted'
 export type TicketStatus = 'available' | 'locked' | 'sold' | 'prize_claimed'
 export type CartItemStatus = 'active' | 'expired' | 'converted'
-export type OrderStatus = 'pending_payment' | 'verifying' | 'paid' | 'cancelled' | 'refunded'
+export type OrderStatus = 'pending_payment' | 'verifying' | 'paid' | 'cancelled' | 'expired' | 'refunded'
 export type PaymentStatus = 'pending' | 'verified' | 'rejected' | 'refunded'
 export type PaymentMethod = 'bank_transfer'
 export type SlipResult = 'match' | 'amount_mismatch' | 'account_mismatch' | 'expired' | 'unreadable'
-export type PrizeClaimStatus = 'pending' | 'processing' | 'paid_out' | 'failed'
+export type PrizeClaimStatus = 'pending' | 'claimed' | 'paid' | 'rejected'
 export type PayoutMethod = 'wallet' | 'bank_transfer'
 export type PrizeItemStatus = 'unchecked' | 'no_prize' | 'won' | 'claimed' | 'paid_out'
-export type WalletTransactionType = 'deposit' | 'withdrawal' | 'prize_payout' | 'purchase' | 'refund'
-export type NotificationType = 'order_paid' | 'prize_won' | 'prize_payout' | 'cart_expiring' | 'system'
+export type WalletTransactionType = 'deposit' | 'withdrawal' | 'prize' | 'prize_payout' | 'purchase' | 'refund'
+export type NotificationType = 'order_paid' | 'prize_won' | 'prize_payout' | 'prize' | 'cart_expiring' | 'system'
 
 export interface User {
   id: string
-  phone: string
+  phone: string | null
   email: string | null
   full_name: string
   id_card_number: string | null
@@ -63,7 +63,7 @@ export interface DrawResult {
   draw_id: string
   prize_type: string
   prize_name: string
-  reward_amount: number
+  prize_amount: number
   winning_number: string
   created_at: string
 }
@@ -85,7 +85,7 @@ export interface Order {
   order_number: string
   user_id: string
   total_amount: number
-  item_count: number
+  total_items: number
   status: OrderStatus
   payment_deadline: string
   paid_at: string | null
@@ -137,6 +137,8 @@ export interface SlipVerification {
 export interface PrizeClaim {
   id: string
   order_item_id: string
+  ticket_id: string
+  draw_id: string
   user_id: string
   prize_type: string
   prize_amount: number
@@ -146,6 +148,8 @@ export interface PrizeClaim {
   payout_method: PayoutMethod | null
   payout_reference: string | null
   claimed_at: string
+  paid_at: string | null
+  paid_by: string | null
   paid_out_at: string | null
   created_at: string
 }
@@ -166,7 +170,8 @@ export interface WalletTransaction {
   wallet_id: string
   type: WalletTransactionType
   amount: number
-  balance_after: number
+  balance_after: number | null
+  reference_type: string | null
   reference_id: string | null
   description: string | null
   created_at: string
@@ -175,7 +180,7 @@ export interface WalletTransaction {
 export interface BankAccount {
   id: string
   user_id: string
-  bank_code: string
+  bank_code: string | null
   bank_name: string
   account_number: string
   account_name: string
@@ -189,8 +194,9 @@ export interface Notification {
   user_id: string
   type: NotificationType
   title: string
-  body: string
+  message: string
   is_read: boolean
+  link: string | null
   metadata: Record<string, unknown> | null
   created_at: string
 }

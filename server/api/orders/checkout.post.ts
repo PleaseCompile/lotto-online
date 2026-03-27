@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
       order_number: orderNumber,
       user_id: user.id,
       total_amount: totalAmount,
-      item_count: itemCount,
+      total_items: itemCount,
       status: 'pending_payment',
       payment_deadline: paymentDeadline.toISOString(),
     })
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
       order_id: order.id,
       order_number: order.order_number,
       total_amount: totalAmount,
-      item_count: itemCount,
+      total_items: itemCount,
       payment_deadline: paymentDeadline.toISOString(),
       bank_account: bankSetting?.value || null,
     },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Order, OrderItem, Ticket, Payment } from '~/types/database'
+import type { Order, OrderItem, Ticket } from '~/types/database'
 
 definePageMeta({
   middleware: ['auth'],
@@ -16,13 +16,12 @@ const { data: order, pending } = await useAsyncData(`order-${orderId}`, async ()
     .from('orders')
     .select(`
       *,
-      order_items(*, tickets(ticket_number, set_number)),
-      payments(*)
+      order_items(*, tickets(ticket_number, set_number))
     `)
     .eq('id', orderId)
     .eq('user_id', user.value.id)
     .single()
-  return data as (Order & { order_items: (OrderItem & { tickets: Pick<Ticket, 'ticket_number' | 'set_number'> })[]; payments: Payment[] }) | null
+  return data as (Order & { order_items: (OrderItem & { tickets: Pick<Ticket, 'ticket_number' | 'set_number'> })[] }) | null
 })
 
 const formatPrice = (satang: number) => {
@@ -35,37 +34,6 @@ const statusLabel: Record<string, string> = {
   paid: 'ชำระแล้ว',
   cancelled: 'ยกเลิก',
   refunded: 'คืนเงินแล้ว',
-}
-
-// Slip upload
-const slipFile = ref<File | null>(null)
-const uploading = ref(false)
-const uploadError = ref<string | null>(null)
-
-const handleSlipUpload = async () => {
-  if (!slipFile.value || !order.value) return
-
-  uploading.value = true
-  uploadError.value = null
-
-  try {
-    const formData = new FormData()
-    formData.append('slip_image', slipFile.value)
-
-    const { error } = await useFetch(`/api/payments/${orderId}/upload-slip`, {
-      method: 'POST',
-      body: formData,
-    })
-
-    if (error.value) {
-      uploadError.value = 'อัปโหลดสลิปไม่สำเร็จ กรุณาลองใหม่'
-    } else {
-      // Refresh order data
-      await refreshNuxtData(`order-${orderId}`)
-    }
-  } finally {
-    uploading.value = false
-  }
 }
 
 useSeoMeta({
@@ -119,7 +87,7 @@ useSeoMeta({
       <!-- Order Items -->
       <div class="card overflow-hidden">
         <div class="px-4 py-3 border-b border-border dark:border-border-dark bg-surface-alt dark:bg-surface-dark-alt">
-          <h3 class="font-medium text-sm">รายการลอตเตอรี่ ({{ order.item_count }} ใบ)</h3>
+          <h3 class="font-medium text-sm">รายการลอตเตอรี่ ({{ order.total_items }} ใบ)</h3>
         </div>
         <div class="divide-y divide-border dark:divide-border-dark">
           <div
@@ -149,28 +117,7 @@ useSeoMeta({
           โอนเงินตามจำนวนด้านบน แล้วอัปโหลดสลิปการโอน
         </p>
 
-        <div v-if="uploadError" class="mb-4 p-3 rounded-md bg-danger/10 border border-danger/20 text-danger text-sm">
-          {{ uploadError }}
-        </div>
-
-        <div class="space-y-3">
-          <input
-            type="file"
-            accept="image/*"
-            class="input"
-            @change="(e: Event) => slipFile = (e.target as HTMLInputElement).files?.[0] || null"
-          />
-          <UiButton
-            variant="primary"
-            class="w-full"
-            :loading="uploading"
-            :disabled="!slipFile"
-            @click="handleSlipUpload"
-          >
-            <Icon name="ph:upload" />
-            อัปโหลดสลิป
-          </UiButton>
-        </div>
+        <SlipUploadForm :order-id="orderId" />
       </div>
     </div>
   </div>

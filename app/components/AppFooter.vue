@@ -42,43 +42,43 @@ const currentYear = new Date().getFullYear() + 543 // พ.ศ.
 
         <!-- Help -->
         <div>
-          <h4 class="font-semibold text-sm mb-3">ช่วยเหลือ</h4>
+          <h4 class="font-semibold text-sm mb-3">บัญชีของฉัน</h4>
           <ul class="space-y-2">
             <li>
-              <NuxtLink to="/help" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
-                วิธีการสั่งซื้อ
+              <NuxtLink to="/orders" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
+                คำสั่งซื้อ
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/faq" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
-                คำถามที่พบบ่อย
+              <NuxtLink to="/wallet" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
+                กระเป๋าเงิน
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/contact" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
-                ติดต่อเรา
+              <NuxtLink to="/settings" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
+                ตั้งค่าบัญชี
               </NuxtLink>
             </li>
           </ul>
         </div>
 
-        <!-- Legal -->
+        <!-- Info -->
         <div>
-          <h4 class="font-semibold text-sm mb-3">นโยบาย</h4>
+          <h4 class="font-semibold text-sm mb-3">ข้อมูล</h4>
           <ul class="space-y-2">
             <li>
-              <NuxtLink to="/terms" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
-                ข้อกำหนดการใช้งาน
+              <NuxtLink to="/results" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
+                ผลรางวัลล่าสุด
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/privacy" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
-                นโยบายความเป็นส่วนตัว
+              <NuxtLink to="/login" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
+                เข้าสู่ระบบ
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/refund" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
-                นโยบายการคืนเงิน
+              <NuxtLink to="/register" class="text-sm text-[var(--color-text-muted)] hover:text-primary transition-colors">
+                สมัครสมาชิก
               </NuxtLink>
             </li>
           </ul>

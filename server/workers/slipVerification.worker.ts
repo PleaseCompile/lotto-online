@@ -112,7 +112,7 @@ const worker = new Worker(
               type: 'payment_verified',
               title: 'การชำระเงินสำเร็จ',
               message: `ออเดอร์ ${orderData.order_number} ชำระเงินเรียบร้อยแล้ว`,
-              data: { order_id: orderId },
+              metadata: { order_id: orderId },
             })
           }
 
@@ -129,7 +129,7 @@ const worker = new Worker(
             type: 'payment_rejected',
             title: 'ยอดเงินไม่ตรง',
             message: `กรุณาอัปโหลดสลิปใหม่ ยอดสลิป ฿${(verifiedAmount / 100).toFixed(2)} ไม่ตรงกับยอดออเดอร์`,
-            data: { order_id: orderId },
+            metadata: { order_id: orderId },
           })
 
           console.log(`[SlipVerify] Payment ${paymentId} amount mismatch: slip=${verifiedAmount} order=${order.total_amount}`)
@@ -153,7 +153,7 @@ const worker = new Worker(
             type: 'payment_rejected',
             title: 'ตรวจสลิปไม่ผ่าน',
             message: 'ไม่สามารถตรวจสอบสลิปได้ กรุณาอัปโหลดใหม่',
-            data: { order_id: orderId },
+            metadata: { order_id: orderId },
           })
         }
 
