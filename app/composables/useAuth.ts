@@ -76,9 +76,25 @@ export const useAuth = () => {
     if (!user.value) return null
 
     try {
-      // Use useRequestFetch during SSR to forward cookies to the API
-      const fetcher = import.meta.server ? useRequestFetch() : $fetch
-      const data = await fetcher<User>('/api/me')
+      // Primary: Direct Supabase query (works with RLS: auth.uid() = id)
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.value.id)
+        .single()
+
+      if (!error && data) {
+        profile.value = data as User
+        return profile.value
+      }
+    } catch {
+      // Fall through to API fallback
+    }
+
+    try {
+      // Fallback: Server API (service role, bypasses RLS)
+      const headers = import.meta.server ? useRequestHeaders(['cookie']) : {}
+      const data = await $fetch<User>('/api/me', { headers })
       profile.value = data
       return profile.value
     } catch {
